@@ -73,6 +73,7 @@ class AmSeed_DummiesService extends BaseApplicationComponent
         $this->_getFieldLayoutFields($elementModel->getFieldLayout());
 
         // Generate dummies!
+        $this->_randomTexts = array(); // Reset for new texts
         craft()->config->maxPowerCaptain();
         craft()->config->set('cacheElementQueries', false);
         for ($i = 0; $i < (int) $totalDummies; $i++) {
