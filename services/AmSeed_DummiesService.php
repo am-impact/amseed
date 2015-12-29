@@ -269,6 +269,15 @@ class AmSeed_DummiesService extends BaseApplicationComponent
                     $element->getContent()->setAttribute($field->handle, mt_rand($min, $max));
                     break;
 
+                case 'PlainText':
+                    if (isset($field->settings['multiline']) && $field->settings['multiline']) {
+                        $element->getContent()->setAttribute($field->handle, $this->_getRandomText());
+                    }
+                    else {
+                        $element->getContent()->setAttribute($field->handle, $this->_getRandomText(1, 'sentences'));
+                    }
+                    break;
+
                 default:
                     $element->getContent()->setAttribute($field->handle, $this->_getRandomText());
                     break;
