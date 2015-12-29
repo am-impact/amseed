@@ -79,6 +79,9 @@ class AmSeed_DummiesService extends BaseApplicationComponent
             // Update counter
             $this->_counter = ($i + 1);
 
+            // Create new model
+            $elementModel = $this->_elementType->populateElementModel((array) $criteria->getAttributes());
+
             // Create dummy!
             $this->_createDummy($elementModel);
         }
