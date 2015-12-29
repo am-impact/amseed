@@ -1,0 +1,30 @@
+{% extends 'amseed/_layouts/settings' %}
+
+{% set title = 'Element types'|t %}
+{% set selectedTab = 'elementTypes' %}
+
+{% block fields %}
+    {% for elementType, elementTypeName in availableElementTypes %}
+        {%- set settingService = elementTypes[ (elementType ~ ' Service')|camel ] -%}
+        {%- set settingMethod = elementTypes[ (elementType ~ ' Method')|camel ] -%}
+
+        {{ forms.textField({
+            label: elementTypeName ~ ': ' ~ 'Service'|t,
+            id: settingService.handle,
+            name: settingService.handle,
+            value: settingService.value,
+            instructions: 'Which service does this element type use?'|t,
+            placeholder: 'entries',
+            first: loop.first,
+        }) }}
+        {{ forms.textField({
+            label: elementTypeName ~ ': ' ~ 'Method'|t,
+            id: settingMethod.handle,
+            name: settingMethod.handle,
+            value: settingMethod.value,
+            instructions: 'Which method does this element type use to save an element?'|t,
+            placeholder: 'saveEntry',
+        }) }}
+        <hr>
+    {% endfor %}
+{% endblock %}

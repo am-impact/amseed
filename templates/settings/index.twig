@@ -1,0 +1,23 @@
+{% extends 'amseed/_layouts/settings' %}
+
+{% set title = 'General'|t %}
+{% set selectedTab = 'general' %}
+
+{% block fields %}
+    {{ forms.textField({
+        label: general.pluginName.name|t,
+        id: general.pluginName.handle,
+        name: general.pluginName.handle,
+        value: general.pluginName.value,
+        instructions: 'Plugin name for the end user.'|t,
+        first: true,
+    }) }}
+    {{ forms.textField({
+        label: general.generateDummiesPerSet.name|t,
+        id: general.generateDummiesPerSet.handle,
+        name: general.generateDummiesPerSet.handle,
+        value: general.generateDummiesPerSet.value,
+        instructions: 'The amount of dummies per set when running the dummy generation task.'|t,
+        size: 5,
+    }) }}
+{% endblock %}

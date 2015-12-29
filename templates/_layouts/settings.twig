@@ -1,0 +1,23 @@
+{% extends '_layouts/cp' %}
+
+{% set fullPageForm = true %}
+
+{% import '_includes/forms' as forms %}
+
+{% set crumbs = [
+    { label: craft.amSeed.name, url: url('amseed') },
+    { label: 'Settings'|t, url: url('amseed/settings') },
+    { label: title, url: '#' }
+] %}
+
+{% set tabs = {
+    general: { label: 'General'|t, url: url('amseed/settings') },
+    elementTypes: { label: 'Element types'|t, url: url('amseed/settings/elementtypes') },
+} %}
+
+{% block content %}
+    <input type="hidden" name="settingsType" value="{{ type }}">
+    <input type="hidden" name="action" value="amSeed/settings/saveSettings">
+
+    {% block fields %}{% endblock %}
+{% endblock %}
