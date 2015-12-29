@@ -244,6 +244,31 @@ class AmSeed_DummiesService extends BaseApplicationComponent
                     $element->getContent()->setAttribute($field->handle, array($this->_getRandomElement($elementType, $sourceKey)));
                     break;
 
+                case 'Checkboxes':
+                case 'Dropdown':
+                case 'RadioButtons':
+                    if (! isset($field->settings['options']) || ! count($field->settings['options'])) {
+                        continue;
+                    }
+
+                    $randomOption = $field->settings['options'][ mt_rand(0, (count($field->settings['options']) - 1)) ]['value'];
+                    if ($field->type == 'Checkboxes') {
+                        $randomOption = array($randomOption);
+                    }
+
+                    $element->getContent()->setAttribute($field->handle, $randomOption);
+                    break;
+
+                case 'Date':
+                    $element->getContent()->setAttribute($field->handle, new DateTime(null, new \DateTimeZone(craft()->getTimeZone())));
+                    break;
+
+                case 'Number':
+                    $min = (isset($field->settings['min']) ? $field->settings['min'] : 0);
+                    $max = (isset($field->settings['max']) ? $field->settings['max'] : 1000);
+                    $element->getContent()->setAttribute($field->handle, mt_rand($min, $max));
+                    break;
+
                 default:
                     $element->getContent()->setAttribute($field->handle, $this->_getRandomText());
                     break;
