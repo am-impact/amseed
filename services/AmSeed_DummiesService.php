@@ -75,9 +75,11 @@ class AmSeed_DummiesService extends BaseApplicationComponent
         // Generate dummies!
         craft()->config->maxPowerCaptain();
         craft()->config->set('cacheElementQueries', false);
-        for ($i = 0; $i < $totalDummies; $i++) {
+        for ($i = 0; $i < (int) $totalDummies; $i++) {
+            // Update counter
             $this->_counter = ($i + 1);
 
+            // Create dummy!
             $this->_createDummy($elementModel);
         }
 
@@ -212,20 +214,30 @@ class AmSeed_DummiesService extends BaseApplicationComponent
         foreach ($this->_fields as $field) {
             switch ($field->type) {
                 case 'Assets':
-                    $elementType = ElementType::Asset;
                 case 'Categories':
-                    $elementType = ElementType::Category;
                 case 'Entries':
-                    $elementType = ElementType::Entry;
                 case 'Users':
-                    $elementType = ElementType::User;
-
                     if (! isset($field->settings['sources'])) {
                         continue;
                     }
 
+                    switch ($field->type) {
+                        case 'Assets':
+                            $elementType = ElementType::Asset;
+                            break;
+                        case 'Categories':
+                            $elementType = ElementType::Category;
+                            break;
+                        case 'Entries':
+                            $elementType = ElementType::Entry;
+                            break;
+                        case 'Users':
+                            $elementType = ElementType::User;
+                            break;
+                    }
+
                     $sourceKey = is_array($field->settings['sources']) ? implode('-', $field->settings['sources']) : $field->settings['sources'];
-                    $element->getContent()->setAttribute($field->handle, $this->_getRandomElement($elementType, $sourceKey));
+                    $element->getContent()->setAttribute($field->handle, array($this->_getRandomElement($elementType, $sourceKey)));
                     break;
 
                 default:
@@ -310,7 +322,7 @@ class AmSeed_DummiesService extends BaseApplicationComponent
             $this->_randomElements[$elementType][$sourceKey] = $criteria->ids();
         }
         if (count($this->_randomElements[$elementType][$sourceKey])) {
-            return array($this->_randomElements[$elementType][$sourceKey][ mt_rand(0, (count($this->_randomElements[$elementType][$sourceKey]) - 1)) ]);
+            return $this->_randomElements[$elementType][$sourceKey][ mt_rand(0, (count($this->_randomElements[$elementType][$sourceKey]) - 1)) ];
         }
 
         return null;
@@ -397,12 +409,16 @@ class AmSeed_DummiesService extends BaseApplicationComponent
 
             // Get words instead?
             if ($getWords) {
+                // Get random words
                 $loremWords = array();
                 $words = explode(' ', str_replace(array('. ', '.', ','), '', $loremText));
                 for ($i = 0; $i < $length; $i++) {
                     $loremWords[] = strtolower($words[ mt_rand(0, (count($words) - 1))]);
                 }
                 $loremText = ucfirst(implode(' ', $loremWords));
+
+                // Change type back to words for saving generated text
+                $type = 'words';
             }
 
             // Remember generated text
