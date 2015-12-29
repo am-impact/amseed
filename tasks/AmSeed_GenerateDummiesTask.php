@@ -73,7 +73,15 @@ class AmSeed_GenerateDummiesTask extends BaseTask
     public function runStep($step)
     {
         // Generator settings
-        $totalDummies = $this->getSettings()->batchSize;
+        if ($this->_totalSteps == 1) {
+            $totalDummies = $this->_generator->total;
+        }
+        elseif (($step + 1) == $this->_totalSteps) {
+            $totalDummies = $this->_generator->total - ($this->getSettings()->batchSize * $step);
+        }
+        else {
+            $totalDummies = $this->getSettings()->batchSize;
+        }
 
         // Start generating dummies
         $result = craft()->amSeed_dummies->createDummies($this->_generator, $totalDummies);
