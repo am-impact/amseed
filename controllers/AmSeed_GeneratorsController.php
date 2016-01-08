@@ -51,7 +51,7 @@ class AmSeed_GeneratorsController extends BaseController
         }
 
         // Get available element types and filterable fields
-        $variables['elementTypes'] = craft()->amSeed_elements->getElementTypes();
+        $variables['elementTypes'] = craft()->amSeed_elements->getElementTypes(true);
         $variables['elementTypeSources'] = craft()->amSeed_elements->getElementTypeSources();
         $variables['elementTypeLocales'] = craft()->amSeed_elements->getElementTypeLocales();
         $variables['elementTypeAttributes'] = craft()->amSeed_elements->getElementTypeAttributes();

@@ -23,16 +23,35 @@ class AmSeed_ElementsService extends BaseApplicationComponent
     /**
      * Get available element types.
      *
+     * @param bool $checkSettings [Optional] Check whether the settings have been set.
+     *
      * @return array
      */
-    public function getElementTypes()
+    public function getElementTypes($checkSettings = false)
     {
         $elementTypes = array();
+        if ($checkSettings) {
+            $typeSettings = craft()->amSeed_settings->getAllSettingsByType(AmSeedModel::SettingElementTypes);
+        }
 
         foreach ($this->_allElementTypes as $type => $elementType) {
             // Ignore some
             if (in_array($type, $this->_ignoreElementTypes)) {
                 continue;
+            }
+
+            // Check for settings?
+            if ($checkSettings) {
+                // Settings for this Element Type are available?
+                $typeCamel = StringHelper::toCamelCase($type);
+                if (
+                    ! isset($typeSettings[$typeCamel . 'Service']) ||
+                    ! isset($typeSettings[$typeCamel . 'Method']) ||
+                    empty($typeSettings[$typeCamel . 'Service']->value) ||
+                    empty($typeSettings[$typeCamel . 'Method']->value)
+                ) {
+                    continue;
+                }
             }
 
             $elementTypes[$type] = $elementType->name;
