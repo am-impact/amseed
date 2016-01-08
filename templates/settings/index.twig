@@ -20,4 +20,11 @@
         instructions: 'The amount of dummies per set when running the dummy generation task.'|t,
         size: 5,
     }) }}
+    {{ forms.textField({
+        label: general.emailAddressForLogs.name|t,
+        id: general.emailAddressForLogs.handle,
+        name: general.emailAddressForLogs.handle,
+        value: general.emailAddressForLogs.value,
+        instructions: 'Who will receive a notification when dummies are generated? Enter comma separated email addresses for more recipients.'|t,
+    }) }}
 {% endblock %}

@@ -21,6 +21,62 @@ class AmSeed_DummiesService extends BaseApplicationComponent
     private $_randomElements = array();
     private $_randomTexts = array();
 
+    private $_log = array(
+        'success' => 0,
+        'errors'  => array()
+    );
+
+    /**
+     * Send log.
+     *
+     * @return bool
+     */
+    public function sendLog()
+    {
+        // Get email address
+        $recipients = craft()->amSeed_settings->getSettingsByHandleAndType('emailAddressForLogs', AmSeedModel::SettingGeneral);
+        if ($recipients && $recipients->value) {
+            $recipients = $recipients->value;
+        }
+        else {
+            return false;
+        }
+
+        // Check for multiple recipients
+        $recipients = ArrayHelper::stringToArray($recipients);
+        $recipients = array_unique($recipients);
+        if (! count($recipients)) {
+            return false;
+        }
+
+        // Craft email settings
+        $settings = craft()->email->getSettings();
+        $systemEmail = !empty($settings['emailAddress']) ? $settings['emailAddress'] : '';
+        $systemName =  !empty($settings['senderName']) ? $settings['senderName'] : '';
+
+        // Set email settings
+        $success = false;
+        $email = new EmailModel();
+        $email->htmlBody = '<pre>' . print_r($this->_log, true) . '</pre>';
+        $email->fromEmail = $systemEmail;
+        $email->fromName = $systemName;
+        $email->subject = Craft::t('Dummy generation log');
+
+        // Send emails
+        foreach ($recipients as $recipient) {
+            $email->toEmail = $recipient;
+
+            if (filter_var($email->toEmail, FILTER_VALIDATE_EMAIL)) {
+                // Add variable for email event
+                if (craft()->email->sendEmail($email)) {
+                    $success = true;
+                }
+            }
+        }
+
+        return $success;
+    }
+
     /**
      * Create dummies.
      *
@@ -84,7 +140,12 @@ class AmSeed_DummiesService extends BaseApplicationComponent
             $elementModel = $this->_elementType->populateElementModel((array) $criteria->getAttributes());
 
             // Create dummy!
-            $this->_createDummy($elementModel);
+            if ($this->_createDummy($elementModel)) {
+                $this->_log['success'] ++;
+            }
+            else {
+                $this->_log['errors'] = $elementModel->getErrors();
+            }
         }
 
         return true;

@@ -8,6 +8,7 @@ return array(
     'Couldn’t find settings type.' => 'Kon de instelling type niet vinden.',
     'Couldn’t save dummy generator.' => 'Kon de dummy generator niet opslaan.',
     'Couldn’t save settings.' => 'Kon de instellingen niet opslaan.',
+    'Dummy generation log' => 'Dummy generatie log',
     'Dummy generator saved.' => 'Dummy generator opgeslagen.',
     'Dummy generators' => 'Dummy generatoren',
     'Edit dummy generator' => 'Dummy generator bewerken',
@@ -50,6 +51,7 @@ return array(
     'Which method does this element type use to save an element?' => 'Welke methode gebruikt dit element type om een element op te slaan?',
     'Which service does this element type use?' => 'Welke service gebruikt dit element type?',
     'Which source do you want to create dummies for?' => 'Voor welke bron wilt u dummies aanmaken?',
+    'Who will receive a notification when dummies are generated? Enter comma separated email addresses for more recipients.' => 'Wie gaan er een notificatie ontvangen wanneer er dummies zijn gegenereerd? Voer komma gescheiden e-mailadressen in voor meer ontvangers.',
     'word' => 'woord',
     'words' => 'woorden',
 );

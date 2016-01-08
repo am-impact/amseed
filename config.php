@@ -14,6 +14,10 @@ return array(
             'name' => 'Generate dummies per set',
             'value' => 100,
         ),
+        array(
+            'name' => 'Email address for logs',
+            'value' => '',
+        ),
     ),
     'elementTypes' => array(
         array(

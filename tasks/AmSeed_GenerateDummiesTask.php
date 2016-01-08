@@ -89,6 +89,7 @@ class AmSeed_GenerateDummiesTask extends BaseTask
         // Is the generator finished?
         if (($step + 1) == $this->getTotalSteps()) {
             $this->_generator->finished = true;
+            craft()->amSeed_dummies->sendLog();
             craft()->amSeed_generators->saveGenerator($this->_generator);
         }
 
