@@ -23,6 +23,7 @@ class AmSeed_DummiesService extends BaseApplicationComponent
 
     private $_log = array(
         'success' => 0,
+        'failed'  => 0,
         'errors'  => array()
     );
 
@@ -94,6 +95,7 @@ class AmSeed_DummiesService extends BaseApplicationComponent
         $this->_service = craft()->amSeed_settings->getSettingsValueByHandleAndType(StringHelper::toCamelCase($generator->elementType . ' Service'), AmSeedModel::SettingElementTypes, false);
         $this->_saveMethod = craft()->amSeed_settings->getSettingsValueByHandleAndType(StringHelper::toCamelCase($generator->elementType . ' Method'), AmSeedModel::SettingElementTypes, false);
         if (! $this->_service || ! $this->_saveMethod) {
+            $this->_log['errors'][] = array('Service and save method not set in settings.');
             return false;
         }
 
@@ -122,6 +124,7 @@ class AmSeed_DummiesService extends BaseApplicationComponent
         // Get element model
         $elementModel = $this->_elementType->populateElementModel((array) $criteria->getAttributes());
         if (! $elementModel) {
+            $this->_log['errors'][] = array('Could not populate an Element Model for this Element Type.');
             return false;
         }
 
@@ -144,6 +147,7 @@ class AmSeed_DummiesService extends BaseApplicationComponent
                 $this->_log['success'] ++;
             }
             else {
+                $this->_log['failed'] ++;
                 $this->_log['errors'] = $elementModel->getErrors();
             }
         }
@@ -286,9 +290,18 @@ class AmSeed_DummiesService extends BaseApplicationComponent
                         continue;
                     }
 
+                    $sourceKey = is_array($field->settings['sources']) ? implode('-', $field->settings['sources']) : $field->settings['sources'];
+                    $additionalCriteria = array();
+
                     switch ($field->type) {
                         case 'Assets':
                             $elementType = ElementType::Asset;
+
+                            // Update key and criteria?
+                            if (isset($field->settings['restrictFiles']) && $field->settings['restrictFiles']) {
+                                $additionalCriteria['kind'] = $field->settings['allowedKinds'];
+                                $sourceKey .= is_array($field->settings['allowedKinds']) ? implode('-', $field->settings['allowedKinds']) : $field->settings['allowedKinds'];
+                            }
                             break;
                         case 'Categories':
                             $elementType = ElementType::Category;
@@ -301,8 +314,7 @@ class AmSeed_DummiesService extends BaseApplicationComponent
                             break;
                     }
 
-                    $sourceKey = is_array($field->settings['sources']) ? implode('-', $field->settings['sources']) : $field->settings['sources'];
-                    $element->getContent()->setAttribute($field->handle, array($this->_getRandomElement($elementType, $sourceKey)));
+                    $element->getContent()->setAttribute($field->handle, array($this->_getRandomElement($elementType, $sourceKey, $additionalCriteria)));
                     break;
 
                 case 'Checkboxes':
@@ -409,15 +421,25 @@ class AmSeed_DummiesService extends BaseApplicationComponent
     /**
      * Get random element based on an Element Type.
      *
-     * @param string $sourceKey Remember the for which source we are getting it for.
+     * @param string $elementType
+     * @param string $sourceKey          Remember which source we are getting it for.
+     * @param array  $additionalCriteria Set additional search criteria.
      *
      * @return mixed
      */
-    private function _getRandomElement($elementType, $sourceKey = '*')
+    private function _getRandomElement($elementType, $sourceKey = '*', $additionalCriteria = array())
     {
         if (! isset($this->_randomElements[$elementType][$sourceKey])) {
             $criteria = craft()->elements->getCriteria($elementType);
             $criteria->status = null;
+
+            // Set additional criteria?
+            if (count($additionalCriteria)) {
+                foreach ($additionalCriteria as $name => $value) {
+                    $criteria->{$name} = $value;
+                }
+            }
+
             $this->_randomElements[$elementType][$sourceKey] = $criteria->ids();
         }
         if (count($this->_randomElements[$elementType][$sourceKey])) {
