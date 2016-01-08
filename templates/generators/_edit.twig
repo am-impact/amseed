@@ -55,7 +55,7 @@
         {%- set active = (generatorId is defined and generator.elementType == type ? true : (generatorId is defined ? false : loop.first)) -%}
 
         <div id="{{ type }}"{% if not active %} class="hidden"{% endif %}>
-            {% if elementTypeSources[type] is not defined %}
+            {% if elementTypeSources[type] is not defined or not elementTypeSources[type]|length %}
                 {% set noSourcesInput %}
                     <p class="error">{{ 'No sources available.'|t }}</p>
                 {% endset %}
