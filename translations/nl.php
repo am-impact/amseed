@@ -16,6 +16,7 @@ return array(
     'Edit settings' => 'Instellingen bewerken',
     'Element type' => 'Element type',
     'Element types' => 'Element types',
+    'Email address for logs' => 'E-mailadres voor logs',
     'Fixed value' => 'Vaste waarde',
     'General data' => 'Algemene gegevens',
     'Generate amount' => 'Aantal te genereren',
