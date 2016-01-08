@@ -40,6 +40,7 @@ return array(
     'Random user' => 'Willekeurige gebruiker',
     'Random text - {count} {type}' => 'Willekeurige tekst - {count} {type}',
     'Restart' => 'Herstarten',
+    'Save, and generate dummies' => 'Bewaren, en genereer dummies',
     'sentence' => 'zin',
     'Service' => 'Service',
     'Settings saved.' => 'Instellingen opgeslagen.',

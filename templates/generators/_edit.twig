@@ -12,6 +12,10 @@
     { label: title, url: '#' }
 ] %}
 
+{% block saveButton %}
+    <input type="submit" class="btn submit" value="{{ (generatorId is defined ? 'Save' : 'Save, and generate dummies')|t }}">
+{% endblock %}
+
 {% block content %}
     <input type="hidden" name="action" value="amSeed/generators/saveGenerator">
     <input type="hidden" name="redirect" value="amseed/generators">
