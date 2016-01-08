@@ -17,40 +17,42 @@
     </p>
 
     {% if generators %}
-        <table id="generators" class="data fullwidth collapsible">
-            <thead>
-                <tr>
-                    <th scope="col">{{ "Name"|t }}</th>
-                    <th scope="col">{{ "Generate amount"|t }}</th>
-                    <th scope="col">{{ "Element type"|t }}</th>
-                    <th scope="col">{{ 'Status'|t }}</th>
-                    <td class="thin"></td>
-                </tr>
-            </thead>
-            <tbody>
-                {% for generator in generators %}
-                    <tr data-id="{{ generator.id }}" data-name="{{ generator.name|t }}">
-                        <th scope="row" data-title="{{ 'Name'|t }}">
-                            <a href="{{ url('amseed/generators/edit/' ~ generator.id) }}">{{ generator.name }}</a>
-                        </th>
-                        <td data-title="{{ 'Generate amount'|t }}">
-                            {{ generator.total }}
-                        </td>
-                        <td data-title="{{ 'Element type'|t }}">
-                            {{ generator.elementType|t }}
-                        </td>
-                        <td data-title="{{ 'Status'|t }}">
-                            {% if generator.finished %}
-                                <a href="{{ actionUrl('amSeed/generators/restartGenerator', { id: generator.id }) }}">{{ 'Restart'|t }}</a>
-                            {% else %}
-                                {{ 'Busy'|t }}
-                            {% endif %}
-                        </td>
-                        <td class="thin"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+        <form method="post">
+            <table id="generators" class="data fullwidth collapsible">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ "Name"|t }}</th>
+                        <th scope="col">{{ "Generate amount"|t }}</th>
+                        <th scope="col">{{ "Element type"|t }}</th>
+                        <th scope="col">{{ 'Status'|t }}</th>
+                        <td class="thin"></td>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for generator in generators %}
+                        <tr data-id="{{ generator.id }}" data-name="{{ generator.name|t }}">
+                            <th scope="row" data-title="{{ 'Name'|t }}">
+                                <a href="{{ url('amseed/generators/edit/' ~ generator.id) }}">{{ generator.name }}</a>
+                            </th>
+                            <td data-title="{{ 'Generate amount'|t }}">
+                                {{ generator.total }}
+                            </td>
+                            <td data-title="{{ 'Element type'|t }}">
+                                {{ generator.elementType|t }}
+                            </td>
+                            <td data-title="{{ 'Status'|t }}">
+                                {% if generator.finished %}
+                                    <a class="formsubmit" data-action="amSeed/generators/restartGenerator" data-confirm="{{ "Are you sure you want to restart this dummy generator?"|t }}" data-param="id" data-value="{{ generator.id }}">{{ 'Restart'|t }}</a>
+                                {% else %}
+                                    {{ 'Busy'|t }}
+                                {% endif %}
+                            </td>
+                            <td class="thin"><a class="delete icon" title="{{ 'Delete'|t }}" role="button"></a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
     {% endif %}
 {% endblock %}
 

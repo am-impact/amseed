@@ -2,6 +2,7 @@
 return array(
     'Access to dummy generators' => 'Toegang tot dummy generatoren',
     'Access to settings' => 'Toegang tot de instellingen',
+    'Are you sure you want to restart this dummy generator?' => 'Weet u zeker dat u deze dummy generator opnieuw wilt herstarten?',
     'Attribute' => 'Attribuut',
     'Attributes' => 'Attributen',
     'Busy' => 'Bezig',
