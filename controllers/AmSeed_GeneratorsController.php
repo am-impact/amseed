@@ -53,6 +53,7 @@ class AmSeed_GeneratorsController extends BaseController
         // Get available element types and filterable fields
         $variables['elementTypes'] = craft()->amSeed_elements->getElementTypes(true);
         $variables['elementTypeSources'] = craft()->amSeed_elements->getElementTypeSources();
+        $variables['elementTypeSourceFields'] = craft()->amSeed_elements->getElementTypeSourceFields();
         $variables['elementTypeLocales'] = craft()->amSeed_elements->getElementTypeLocales();
         $variables['elementTypeAttributes'] = craft()->amSeed_elements->getElementTypeAttributes();
         $variables['attributeValueOptions'] = craft()->amSeed_elements->getAttributeValueOptions();
@@ -85,8 +86,16 @@ class AmSeed_GeneratorsController extends BaseController
         $generator->total       = craft()->request->getPost('total');
         $generator->elementType = craft()->request->getPost('elementType');
 
-        // Get settings
+        // Get POST data
         $settings = craft()->request->getPost('settings');
+        $fields = craft()->request->getPost('sourceFields');
+
+        // Get fields
+        if (isset($fields[ $generator->elementType ]) && isset($generator->settings['source'])) {
+            $settings[ $generator->elementType ]['fields'] = $fields[ $generator->elementType ][ $generator->settings['source'] ];
+        }
+
+        // Get settings
         if (isset($settings[ $generator->elementType ])) {
             $generator->settings = $settings[ $generator->elementType ];
         }

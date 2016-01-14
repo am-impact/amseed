@@ -1,0 +1,41 @@
+{% if elementTypeSourceFields[type] is defined and elementTypeSourceFields[type]|length %}
+    {% for source, fields in elementTypeSourceFields[type] %}
+        {% if fields|length %}
+            {%- set sourceActive = (generator is defined and generator.settings['source'] is defined and generator.settings['source'] == source ? true : (generatorId is defined ? false : loop.first)) -%}
+
+                <div id="{{ type }}_{{ source }}"{% if not sourceActive %} class="hidden"{% endif %}>
+                    {% set sourceFields %}
+                        <table class="data fullwidth">
+                            <thead>
+                                <tr>
+                                    <th class="thin"></th>
+                                    <th scope="col">{{ "Field"|t }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fieldId, field in fields %}
+                                    <tr>
+                                        <td>
+                                            {{ forms.checkbox({
+                                                id: 'sourceFields[' ~ type ~ '][' ~ source ~ '][' ~ fieldId ~ '][enabled]',
+                                                name: 'sourceFields[' ~ type ~ '][' ~ source ~ '][' ~ fieldId ~ '][enabled]',
+                                                value: 1,
+                                                checked: (generator is defined and generator.settings['fields'][fieldId]['enabled'] is defined ? generator.settings['fields'][fieldId]['enabled'] : field.required),
+                                                disabled: field.required,
+                                            }) }}
+                                        </td>
+                                        <td>{{ field.label }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endset %}
+                    {{ forms.field({
+                        label: "Fields"|t,
+                        instructions: "Which fields do you want to fill with content? Required fields are filled by default."|t,
+                    }, sourceFields) }}
+                </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}

@@ -50,6 +50,7 @@ return array(
     'What this dummy generator will be called in the CP.' => 'Naam van deze dummy generator in de CP.',
     'Which additional attributes do you want to fill with content?' => 'Welke extra attributen wilt u vullen met content?',
     'Which element type is this dummy generator about?' => 'Over welk element type gaat deze dummy generator?',
+    'Which fields do you want to fill with content? Required fields are filled by default.' => 'Welke velden wilt u vullen met content? Verplichte velden worden standaard gevuld.',
     'Which locale do you want to create dummies for?' => 'Voor welke taalzone wilt u dummies aanmaken?',
     'Which method does this element type use to save an element?' => 'Welke methode gebruikt dit element type om een element op te slaan?',
     'Which service does this element type use?' => 'Welke service gebruikt dit element type?',

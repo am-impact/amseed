@@ -59,6 +59,17 @@
         {%- set active = (generatorId is defined and generator.elementType == type ? true : (generatorId is defined ? false : loop.first)) -%}
 
         <div id="{{ type }}"{% if not active %} class="hidden"{% endif %}>
+            {% if elementTypeLocales[type] is defined %}
+                {{ forms.checkboxselectField({
+                    label: "Locale"|t,
+                    instructions: "Which locale do you want to create dummies for?"|t,
+                    id: 'settings[' ~ type ~ '][locale]',
+                    name: 'settings[' ~ type ~ '][locale]',
+                    options: attribute(elementTypeLocales, type),
+                    value: (generator is defined and generator.settings['locale'] is defined ? generator.settings['locale'] : null),
+                }) }}
+            {% endif %}
+
             {% if elementTypeSources[type] is not defined or not elementTypeSources[type]|length %}
                 {% set noSourcesInput %}
                     <p class="error">{{ 'No sources available.'|t }}</p>
@@ -75,81 +86,38 @@
                     name: 'settings[' ~ type ~ '][source]',
                     options: attribute(elementTypeSources, type),
                     value: (generator is defined and generator.settings['source'] is defined ? generator.settings['source'] : null),
+                    toggle: true,
+                    targetPrefix: type ~ '_'
                 }) }}
             {% endif %}
 
-            {% if elementTypeLocales[type] is defined %}
-                {{ forms.checkboxselectField({
-                    label: "Locale"|t,
-                    instructions: "Which locale do you want to create dummies for?"|t,
-                    id: 'settings[' ~ type ~ '][locale]',
-                    name: 'settings[' ~ type ~ '][locale]',
-                    options: attribute(elementTypeLocales, type),
-                    value: (generator is defined and generator.settings['locale'] is defined ? generator.settings['locale'] : null),
-                }) }}
-            {% endif %}
-
-            {% if elementTypeAttributes[type]|length %}
-                {% set attributeField %}
-                    <table class="data fullwidth collapsible">
-                        <thead>
-                            <tr>
-                                <th class="thin"></th>
-                                <th scope="col">{{ "Attribute"|t }}</th>
-                                <th scope="col">{{ "Value"|t }}</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for elementTypeAttribute in elementTypeAttributes[type] %}
-                                {%- set attributeValue = (generator is defined and generator.settings['attributes'][elementTypeAttribute]['value'] is defined ? generator.settings['attributes'][elementTypeAttribute]['value'] : null) -%}
-                                {% if attributeValue is iterable %}
-                                    {% for tempKey, tempValue in attributeValue %}
-                                        {% set attributeValue = tempKey %}
-                                    {% endfor %}
-                                {% endif %}
-                                {%- set activeAttributeValue = (generator is defined and attributeValue == 'fixedValue' ? true : false) -%}
-
-                                <tr>
-                                    <td>
-                                        {{ forms.checkbox({
-                                            id: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][enabled]',
-                                            name: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][enabled]',
-                                            value: 1,
-                                            checked: (generator is defined and generator.settings['attributes'][elementTypeAttribute]['enabled'] is defined ? generator.settings['attributes'][elementTypeAttribute]['enabled'] : null),
-                                        }) }}
-                                    </td>
-                                    <td>{{ elementTypeAttribute }}</td>
-                                    <td>
-                                        {{ forms.select({
-                                            id: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][value]',
-                                            name: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][value]',
-                                            options: attributeValueOptions,
-                                            value: attributeValue,
-                                            toggle: true,
-                                            targetPrefix: elementTypeAttribute ~ '_',
-                                        }) }}
-                                    </td>
-                                    <td>
-                                        <div id="{{ elementTypeAttribute }}_fixedValue"{% if not activeAttributeValue %} class="hidden"{% endif %}>
-                                            {{ forms.text({
-                                                id: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][fixedValue]',
-                                                name: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][fixedValue]',
-                                                value: (generator is defined and generator.settings['attributes'][elementTypeAttribute]['fixedValue'] is defined ? generator.settings['attributes'][elementTypeAttribute]['fixedValue'] : null)
-                                            }) }}
-                                        </div>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% endset %}
-                {{ forms.field({
-                    label: "Attributes"|t,
-                    instructions: "Which additional attributes do you want to fill with content?"|t,
-                }, attributeField) }}
-            {% endif %}
+            {% include 'amseed/generators/_includes/sourceFields' %}
+            {% include 'amseed/generators/_includes/attributes' %}
         </div>
     {% endfor %}
 
 {% endblock %}
+
+{% includejs %}
+    $(document).ready(function() {
+        $('select[id*="source"]:not([data-targetPrefix=""])').each(function() {
+            var $obj = $(this),
+                $options = $('option', $obj),
+                targetPrefix = $obj.data('targetPrefix');
+
+            $obj.on('change', function() {
+                var sourceId = $(this).val(),
+                    $container = $('#' + targetPrefix + sourceId.replace(':', '\\:'));
+
+                $options.each(function() {
+                    var tempId = $(this).val(),
+                        $tempContainer = $('#' + targetPrefix + tempId.replace(':', '\\:'));
+
+                    $tempContainer.addClass('hidden');
+                });
+
+                $container.removeClass('hidden');
+            });
+        });
+    });
+{% endincludejs %}

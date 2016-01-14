@@ -209,14 +209,25 @@ class AmSeed_DummiesService extends BaseApplicationComponent
      */
     private function _getFieldLayoutFields($fieldLayout)
     {
+        // Get fields to fill with content, from the settings
+        $fillFieldIds = array();
+        if ($this->_getGeneratorSetting('fields')) {
+            foreach ($this->_getGeneratorSetting('fields') as $fieldId => $fieldSettings) {
+                if ($fieldSettings['enabled']) {
+                    $fillFieldIds[] = $fieldId;
+                }
+            }
+        }
+
+        // Find fields based on layout
         foreach ($fieldLayout->getTabs() as $tab) {
             // Tab fields
             $fields = $tab->getFields();
             foreach ($fields as $layoutField) {
-                if ($layoutField->required) {
-                    // Get actual field
-                    $field = $layoutField->getField();
+                // Get actual field
+                $field = $layoutField->getField();
 
+                if ($layoutField->required || in_array($field->id, $fillFieldIds)) {
                     $this->_fields[] = $field;
                 }
             }

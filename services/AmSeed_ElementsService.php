@@ -104,6 +104,80 @@ class AmSeed_ElementsService extends BaseApplicationComponent
     }
 
     /**
+     * Get available fields for the sources per element type.
+     *
+     * @return array
+     */
+    public function getElementTypeSourceFields()
+    {
+        $fields = array();
+
+        foreach ($this->_allElementTypes as $type => $elementType) {
+            // Ignore some
+            if (in_array($type, $this->_ignoreElementTypes)) {
+                continue;
+            }
+
+            // Does this element type even have content?
+            if (! $elementType->hasContent()) {
+                continue;
+            }
+
+            $fields[$type] = array();
+
+            foreach ($elementType->getSources() as $key => $source) {
+                $skip = false;
+
+                if (! isset($source['heading'])) {
+                    switch ($type) {
+                        case ElementType::Entry:
+                            if ($key == '*' || $key == 'singles') {
+                                $skip = true;
+                            }
+                            break;
+
+                    }
+
+                    if (! $skip) {
+                        $fields[$type][$key] = array();
+
+                        // Get element criteria
+                        $criteria = craft()->elements->getCriteria($type);
+                        if (isset($source['criteria'])) {
+                            $criteria->setAttributes($source['criteria']);
+                        }
+
+                        // Get element model
+                        $elementModel = $elementType->populateElementModel((array) $criteria->getAttributes());
+                        if ($elementModel && method_exists($elementModel, 'getFieldLayout')) {
+                            // Get field layout
+                            $fieldLayout = $elementModel->getFieldLayout();
+                            if ($fieldLayout) {
+                                foreach ($fieldLayout->getTabs() as $tab) {
+                                    // Tab fields
+                                    $tabFields = $tab->getFields();
+                                    foreach ($tabFields as $layoutField) {
+                                        // Get actual field
+                                        $field = $layoutField->getField();
+
+                                        $fields[$type][$key][$field->id] = array(
+                                            'label'    => $field->name,
+                                            'value'    => $field->handle,
+                                            'required' => $layoutField->required
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
      * Get locales per element type.
      *
      * @return array

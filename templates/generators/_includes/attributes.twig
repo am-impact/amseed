@@ -1,0 +1,60 @@
+{% if elementTypeAttributes[type]|length %}
+    {% set attributeField %}
+        <table class="data fullwidth">
+            <thead>
+                <tr>
+                    <th class="thin"></th>
+                    <th scope="col">{{ "Attribute"|t }}</th>
+                    <th scope="col">{{ "Value"|t }}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for elementTypeAttribute in elementTypeAttributes[type] %}
+                    {%- set attributeValue = (generator is defined and generator.settings['attributes'][elementTypeAttribute]['value'] is defined ? generator.settings['attributes'][elementTypeAttribute]['value'] : null) -%}
+                    {% if attributeValue is iterable %}
+                        {% for tempKey, tempValue in attributeValue %}
+                            {% set attributeValue = tempKey %}
+                        {% endfor %}
+                    {% endif %}
+                    {%- set activeAttributeValue = (generator is defined and attributeValue == 'fixedValue' ? true : false) -%}
+
+                    <tr>
+                        <td>
+                            {{ forms.checkbox({
+                                id: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][enabled]',
+                                name: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][enabled]',
+                                value: 1,
+                                checked: (generator is defined and generator.settings['attributes'][elementTypeAttribute]['enabled'] is defined ? generator.settings['attributes'][elementTypeAttribute]['enabled'] : null),
+                            }) }}
+                        </td>
+                        <td>{{ elementTypeAttribute }}</td>
+                        <td>
+                            {{ forms.select({
+                                id: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][value]',
+                                name: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][value]',
+                                options: attributeValueOptions,
+                                value: attributeValue,
+                                toggle: true,
+                                targetPrefix: elementTypeAttribute ~ '_',
+                            }) }}
+                        </td>
+                        <td>
+                            <div id="{{ elementTypeAttribute }}_fixedValue"{% if not activeAttributeValue %} class="hidden"{% endif %}>
+                                {{ forms.text({
+                                    id: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][fixedValue]',
+                                    name: 'settings[' ~ type ~ '][attributes][' ~ elementTypeAttribute ~ '][fixedValue]',
+                                    value: (generator is defined and generator.settings['attributes'][elementTypeAttribute]['fixedValue'] is defined ? generator.settings['attributes'][elementTypeAttribute]['fixedValue'] : null)
+                                }) }}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endset %}
+    {{ forms.field({
+        label: "Attributes"|t,
+        instructions: "Which additional attributes do you want to fill with content?"|t,
+    }, attributeField) }}
+{% endif %}
