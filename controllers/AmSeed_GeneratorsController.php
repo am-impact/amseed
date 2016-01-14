@@ -91,8 +91,8 @@ class AmSeed_GeneratorsController extends BaseController
         $fields = craft()->request->getPost('sourceFields');
 
         // Get fields
-        if (isset($fields[ $generator->elementType ]) && isset($generator->settings['source'])) {
-            $settings[ $generator->elementType ]['fields'] = $fields[ $generator->elementType ][ $generator->settings['source'] ];
+        if (isset($fields[ $generator->elementType ]) && isset($settings[ $generator->elementType ]['source'])) {
+            $settings[ $generator->elementType ]['fields'] = $fields[ $generator->elementType ][ $settings[ $generator->elementType ]['source'] ];
         }
 
         // Get settings

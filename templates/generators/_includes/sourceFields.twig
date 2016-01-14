@@ -21,7 +21,7 @@
                                                 id: 'sourceFields[' ~ type ~ '][' ~ source ~ '][' ~ fieldId ~ '][enabled]',
                                                 name: 'sourceFields[' ~ type ~ '][' ~ source ~ '][' ~ fieldId ~ '][enabled]',
                                                 value: 1,
-                                                checked: (generator is defined and generator.settings['fields'][fieldId]['enabled'] is defined ? generator.settings['fields'][fieldId]['enabled'] : field.required),
+                                                checked: (generator is defined and generator.settings['fields'][fieldId]['enabled'] is defined ? (generator.settings['fields'][fieldId]['enabled'] or field.required) : field.required),
                                                 disabled: field.required,
                                             }) }}
                                         </td>
