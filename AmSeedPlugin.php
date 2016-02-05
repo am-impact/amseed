@@ -28,6 +28,14 @@ class AmSeedPlugin extends BasePlugin
      */
     public function getVersion()
     {
+        return '1.0.1';
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSchemaVersion()
+    {
         return '1.0.0';
     }
 

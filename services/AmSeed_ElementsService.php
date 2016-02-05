@@ -136,6 +136,11 @@ class AmSeed_ElementsService extends BaseApplicationComponent
                             }
                             break;
 
+                        default:
+                            if ($key == '*') {
+                                $skip = true;
+                            }
+                            break;
                     }
 
                     if (! $skip) {
