@@ -23,12 +23,17 @@ class AmSeedPlugin extends BasePlugin
         return Craft::t('a&m seed');
     }
 
+    public function getReleaseFeedUrl()
+    {
+        return 'https://raw.githubusercontent.com/am-impact/amseed/master/releases.json';
+    }
+
     /**
      * @return string
      */
     public function getVersion()
     {
-        return '1.0.1';
+        return '1.0.2';
     }
 
     /**
